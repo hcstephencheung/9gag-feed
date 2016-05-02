@@ -2,6 +2,17 @@ README NOTES:
 - read TODOs
 
 
+1. Created own "jQuery" library for the following methods:
+	- append() : for newly created elements and for existing elements
+	- addClass()
+	- removeClass()
+	- hasClass()
+   Mainly for the purpose of ease-of-use. I knew I needed .append() so 
+   that's why I wrote the wrapper
+2. As such, variable names prefixed by $ are of type SelectorLibrary
+3. Variable names prefixed by $$ are of type Element
+
+
 getImages()
 events vs callbacks
 - contemplated on callbacks
