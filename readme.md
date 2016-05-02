@@ -16,12 +16,12 @@ A 9gag image carousel! "9😃"
 - CSS is not vendor prefixed: will need to either compile through compass or through another vendor prefix preprocessor
 - if using my own personal jQuery wrapper for .append(), currently it only supports appending Nodes of 1 child
 
-## Could-have / Should-have
+## Could-have / Should-have 💅
 - [ ] Currently only 1 set of images will be pulled on load. However, the JS is setup so that ajax-ing other sets will be very easy to do (modular code + own jQuery library)
 - [ ] the actual UI is pretty ugly...sorry I focused too much on the JS side
 
 
-## Extra Notes 💅
+## Extra Notes 🎅
 1. Created own "jQuery" library for the following methods:
 	- append() : for newly created elements and for existing elements
 	- addClass()
