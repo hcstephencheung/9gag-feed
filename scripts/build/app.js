@@ -83,6 +83,23 @@
         return;
     };
 
+    $$selectorLibrary$$SelectorLibrary.prototype.hasClass = function(className) {
+        return !!this.dom.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'))
+    };
+
+    $$selectorLibrary$$SelectorLibrary.prototype.addClass = function(className) {
+        if (!this.hasClass(className)) { 
+            this.dom.className += " " + className;
+        }
+    };
+
+    $$selectorLibrary$$SelectorLibrary.prototype.removeClass = function(className) {
+        if (this.hasClass(className)) {
+            var regex = new RegExp('(\\s|^)' + className + '(\\s|$)');
+            this.dom.className = this.dom.className.replace(regex, ' ');
+        }
+    };
+
     // Creates a wrapper around selected element
     var $$selectorLibrary$$S = function(selector) {
         var $obj = new $$selectorLibrary$$SelectorLibrary(selector);
@@ -165,8 +182,29 @@
         return $$imageFetcher$$ImageFetcher(url, query);
     };
 
-    var app$$run = function() {
-        var $content = $$selectorLibrary$$S('#printer');
+    var app$$_bindClick = function(e) {
+        var $target = $$selectorLibrary$$S(e.target);
+
+        // check if target is img...
+        if ($target.dom.tagName != 'IMG') {
+            // TODO: hook up click to find the image
+            return;
+        }
+
+        var $overlay = $$selectorLibrary$$S('#overlay-image-container');
+        var $largeImage = $$selectorLibrary$$S('<img src="' + $target.dom.dataset["lg"] +'"/>');
+
+        // $overlay.empty().append()...
+        $overlay.dom.innerHTML = '';
+        $overlay.append($largeImage);
+
+        $target.addClass('c--current');
+    };
+
+    var app$$_subscribeToImages = function() {
+        var $content = $$selectorLibrary$$S('#feed');
+        // bind overlay
+        $$selectorLibrary$$S('#feed').dom.addEventListener('click', app$$_bindClick);
 
         $$eventBus$$EventBus.subscribe($$eventBus$$EventBus.events.IMAGES_UPDATED, function(data) {
             if (!data.length) {
@@ -179,10 +217,11 @@
             for(var i = 0; i < dataSize - 1; i++) {
                 var gagObj = data[i];
 
-                var imgUrl = gagObj.images.small;
+                var thumbUrl = gagObj.images.small;
+                var lgUrl = gagObj.images.large;
                 var caption = gagObj.caption;
                 var $imageWrapper = $$selectorLibrary$$S('<div class="c-images"></div>');
-                var $image = $$selectorLibrary$$S('<img src="' + imgUrl + '"/>');
+                var $image = $$selectorLibrary$$S('<img src="' + thumbUrl + '" data-lg="' + lgUrl + '"/>');
                 var $caption = $$selectorLibrary$$S('<p>' + caption + '</p>');
 
                 // API currently only supports nodes to be appended to dom first
@@ -192,15 +231,21 @@
                 $imageWrapper.append($image);
                 $imageWrapper.append($caption);
             }
-
         });
+    };
 
+    var app$$_initImageFetch = function() {
         var url = 'http://infinigag.k3min.eu/';
         var category = 'hot';
 
         var imageFetcher = $$imageFetcher$$ImageFetcherModule(url, category);
 
         imageFetcher.getImages();
+    };
+
+    var app$$run = function() {
+        app$$_subscribeToImages();
+        app$$_initImageFetch();
     };
 
     // let the fun begin!

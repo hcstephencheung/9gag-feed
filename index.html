@@ -2,16 +2,20 @@
 <html>
 <head>
     <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="app.css"/>
+    <link rel="stylesheet" type="text/css" href="stylesheets/css/app.css"/>
 </head>
 <body>
 
     <section role="main" class="main">
-
+        <h1 class="c-title">Stephen's 9gag Image feed!</h1>
+        <section id="feed"></section>
     </section>
 
-    <p id="testing">testing</p>
-    <section id="printer"></section>
+    <div class="c-overlay">
+        <a aria-role="button" class="c-overlay__next" id="overlay-next"> Next </a>
+        <div id="overlay-image-container"></div>
+        <a aria-role="button" class="c-overlay__prev" id="overlay-prev"> Previous </a>
+    </div>
 
     <script src="scripts/build/app.js"></script>
 </body>
