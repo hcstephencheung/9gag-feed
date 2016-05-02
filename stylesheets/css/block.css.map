@@ -1,7 +1,0 @@
-{
-"version": 3,
-"mappings": "AAAA,QAAS;EACL,KAAK,EAAE,GAAG;EACV,OAAO,EAAE,YAAY;EAErB,UAAU,EAAE,MAAM",
-"sources": ["../sass/block.scss"],
-"names": [],
-"file": "block.css"
-}
