@@ -2,7 +2,7 @@ import { S } from "./selectorLibrary";
 import { ImageFetcherModule as ImageFetcher } from "./imageFetcher";
 import { EventBus } from "./eventBus";
 
-var _bindClick = function(e) {
+var _bindThumbnailActions = function(e) {
     var $target = S(e.target);
 
     // check if target is img...
@@ -18,13 +18,52 @@ var _bindClick = function(e) {
     $overlay.dom.innerHTML = '';
     $overlay.append($largeImage);
 
-    $target.addClass('c--current');
+    // nuke all c--current classes first
+    var currentImages = document.querySelectorAll('#feed .c--current');
+    for (var i = 0; i < currentImages.length; i++) {
+        S(currentImages[i]).removeClass('c--current');
+    }
+
+    // setup next/previous with c--current
+    S($target.dom.parentElement).addClass('c--current');
+    // show the overlay
+    $overlay.addClass('c--active');
+};
+
+var _bindOverlayActions = function(e) {
+    var targetId = e.target.getAttribute('id');
+
+    if (targetId !== 'overlay-next' && targetId !== 'overlay-prev') {
+        return;
+    }
+
+    var $$currentImage = document.querySelector('#feed .c--current');
+    // there's only 1 image in the overlay
+    var $$overlayImage = document.querySelector('#overlay img');
+    var $$advanceImage;
+
+    if (targetId === 'overlay-next') {
+        $$advanceImage = $$currentImage.nextSibling;
+    } else {
+        $$advanceImage = $$currentImage.previousSibling;
+    }
+
+    if (!$$advanceImage) {
+        return;
+    }
+
+    S($$currentImage).removeClass('c--current');
+    S($$advanceImage).addClass('c--current');
+
+    // change the overlay image
+    $$overlayImage.setAttribute('src', $$advanceImage.querySelector('img').dataset["lg"]);
 };
 
 var _subscribeToImages = function() {
     var $content = S('#feed');
     // bind overlay
-    S('#feed').dom.addEventListener('click', _bindClick);
+    S('#feed').dom.addEventListener('click', _bindThumbnailActions);
+    S('#overlay').dom.addEventListener('click', _bindOverlayActions);
 
     EventBus.subscribe(EventBus.events.IMAGES_UPDATED, function(data) {
         if (!data.length) {

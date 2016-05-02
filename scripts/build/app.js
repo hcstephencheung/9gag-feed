@@ -182,7 +182,7 @@
         return $$imageFetcher$$ImageFetcher(url, query);
     };
 
-    var app$$_bindClick = function(e) {
+    var app$$_bindThumbnailActions = function(e) {
         var $target = $$selectorLibrary$$S(e.target);
 
         // check if target is img...
@@ -198,13 +198,52 @@
         $overlay.dom.innerHTML = '';
         $overlay.append($largeImage);
 
-        $target.addClass('c--current');
+        // nuke all c--current classes first
+        var currentImages = document.querySelectorAll('#feed .c--current');
+        for (var i = 0; i < currentImages.length; i++) {
+            $$selectorLibrary$$S(currentImages[i]).removeClass('c--current');
+        }
+
+        // setup next/previous with c--current
+        $$selectorLibrary$$S($target.dom.parentElement).addClass('c--current');
+        // show the overlay
+        $overlay.addClass('c--active');
+    };
+
+    var app$$_bindOverlayActions = function(e) {
+        var targetId = e.target.getAttribute('id');
+
+        if (targetId !== 'overlay-next' && targetId !== 'overlay-prev') {
+            return;
+        }
+
+        var $$currentImage = document.querySelector('#feed .c--current');
+        // there's only 1 image in the overlay
+        var $$overlayImage = document.querySelector('#overlay img');
+        var $$advanceImage;
+
+        if (targetId === 'overlay-next') {
+            $$advanceImage = $$currentImage.nextSibling;
+        } else {
+            $$advanceImage = $$currentImage.previousSibling;
+        }
+
+        if (!$$advanceImage) {
+            return;
+        }
+
+        $$selectorLibrary$$S($$currentImage).removeClass('c--current');
+        $$selectorLibrary$$S($$advanceImage).addClass('c--current');
+
+        // change the overlay image
+        $$overlayImage.setAttribute('src', $$advanceImage.querySelector('img').dataset["lg"]);
     };
 
     var app$$_subscribeToImages = function() {
         var $content = $$selectorLibrary$$S('#feed');
         // bind overlay
-        $$selectorLibrary$$S('#feed').dom.addEventListener('click', app$$_bindClick);
+        $$selectorLibrary$$S('#feed').dom.addEventListener('click', app$$_bindThumbnailActions);
+        $$selectorLibrary$$S('#overlay').dom.addEventListener('click', app$$_bindOverlayActions);
 
         $$eventBus$$EventBus.subscribe($$eventBus$$EventBus.events.IMAGES_UPDATED, function(data) {
             if (!data.length) {

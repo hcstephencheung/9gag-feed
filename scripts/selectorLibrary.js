@@ -1,4 +1,4 @@
-// Simple selector library that just selects by ID
+// Simple selector library that just selects by single element (identified by ID)
 // We need this wrapper to create our own .append()
 var SelectorLibrary = function(selector) {
     this.selector = selector || null;
