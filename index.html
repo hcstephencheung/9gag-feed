@@ -1,1 +1,26 @@
-Testing
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/css/app.css"/>
+</head>
+<body>
+
+    <section role="main" class="main">
+        <h1 class="c-title">Stephen's 9gag Image feed!</h1>
+        <section id="feed"></section>
+    </section>
+
+    <div id="overlay" class="c-overlay">
+        <h2 id="overlay-title"></h2>
+        <img id="overlay-img">
+
+        <a aria-role="button" class="c-overlay__next c-overlay__buttons" id="overlay-next"> Next </a>
+        <a aria-role="button" class="c-overlay__prev c-overlay__buttons" id="overlay-prev"> Previous </a>
+        <a aria-role="button" class="c-overlay__close c-overlay__buttons" id="overlay-close"> Close </a>
+    </div>
+    <div class="c-overlay__shade"></div>
+
+    <script src="scripts/build/app.js"></script>
+</body>
+</html>
