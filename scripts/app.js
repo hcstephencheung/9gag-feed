@@ -89,7 +89,7 @@ var _subscribeToImages = function() {
             var thumbUrl = gagObj.images.small;
             var lgUrl = gagObj.images.large;
             var caption = gagObj.caption;
-            var $imageWrapper = S('<div class="c-image"></div>');
+            var $imageWrapper = S('<div class="c-block"></div>');
             var $image = S('<img class="c-image__img" src="' + thumbUrl + '" data-lg="' + lgUrl + '"/>');
             var $caption = S('<p class="c-images__caption js-caption">' + caption + '</p>');
 

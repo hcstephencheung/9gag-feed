@@ -1,0 +1,93 @@
+// Overlay Styles
+// ---
+// 1. Avoid title from blocking the image
+
+.c-overlay {
+    position: fixed;
+    display: none;
+
+    top: 0;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    z-index: 100;
+
+    &.c--active {
+        display: block;
+    }
+
+    img {
+        position: absolute;
+
+        top: 65px; // 1.
+
+        width: 100%;
+    }
+
+    h2 {
+        position: fixed;
+
+        top: 15px;
+        left: 0;
+        right: 0;
+
+        padding: 10px 0;
+        margin: 0;
+
+        z-index: 101;
+
+        background-color: black;
+        color: white;
+
+        text-align: center;
+    }
+
+    .c-overlay__buttons {
+        position: fixed;
+
+        width: 50px;
+        height: 50px;
+
+        background-color: indigo;
+        color: black;
+
+        z-index: 101;
+
+        text-align: center;
+    }
+
+    .c-overlay__next {
+        top: 50%;
+        transform: translateY(-50%);
+
+        right: 20px;
+    }
+
+    .c-overlay__prev {
+        top: 50%;
+        transform: translateY(-50%);
+
+        left: 20px;
+    }
+
+    .c-overlay__close {
+        top: 0;
+        right: 20px;
+    }
+}
+
+.c-overlay.c--active + .c-overlay__shade {
+    position: fixed;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right:0;
+
+    opacity: 0.9;
+    background-color: black;
+}

@@ -269,7 +269,7 @@
                 var thumbUrl = gagObj.images.small;
                 var lgUrl = gagObj.images.large;
                 var caption = gagObj.caption;
-                var $imageWrapper = $$selectorLibrary$$S('<div class="c-image"></div>');
+                var $imageWrapper = $$selectorLibrary$$S('<div class="c-block"></div>');
                 var $image = $$selectorLibrary$$S('<img class="c-image__img" src="' + thumbUrl + '" data-lg="' + lgUrl + '"/>');
                 var $caption = $$selectorLibrary$$S('<p class="c-images__caption js-caption">' + caption + '</p>');
 

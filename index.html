@@ -13,12 +13,13 @@
 
     <div id="overlay" class="c-overlay">
         <h2 id="overlay-title"></h2>
-        <a aria-role="button" class="c-overlay__next" id="overlay-next"> Next </a>
         <img id="overlay-img">
-        <a aria-role="button" class="c-overlay__prev" id="overlay-prev"> Previous </a>
 
-        <a aria-role="button" class="c-overlay__prev" id="overlay-close"> Close </a>
+        <a aria-role="button" class="c-overlay__next c-overlay__buttons" id="overlay-next"> Next </a>
+        <a aria-role="button" class="c-overlay__prev c-overlay__buttons" id="overlay-prev"> Previous </a>
+        <a aria-role="button" class="c-overlay__close c-overlay__buttons" id="overlay-close"> Close </a>
     </div>
+    <div class="c-overlay__shade"></div>
 
     <script src="scripts/build/app.js"></script>
 </body>
