@@ -182,6 +182,15 @@
         return $$imageFetcher$$ImageFetcher(url, query);
     };
 
+    var app$$_updateOverlay = function(imgSrc, caption) {
+        var $$overlay = document.querySelector('#overlay');
+        var $$caption = $$overlay.querySelector('#overlay-title');
+        var $$img = $$overlay.querySelector('#overlay-img');
+
+        $$img.setAttribute('src', imgSrc);
+        $$caption.textContent = caption;
+    };
+
     var app$$_bindThumbnailActions = function(e) {
         var $target = $$selectorLibrary$$S(e.target);
 
@@ -191,13 +200,6 @@
             return;
         }
 
-        var $overlay = $$selectorLibrary$$S('#overlay-image-container');
-        var $largeImage = $$selectorLibrary$$S('<img src="' + $target.dom.dataset["lg"] +'"/>');
-
-        // $overlay.empty().append()...
-        $overlay.dom.innerHTML = '';
-        $overlay.append($largeImage);
-
         // nuke all c--current classes first
         var currentImages = document.querySelectorAll('#feed .c--current');
         for (var i = 0; i < currentImages.length; i++) {
@@ -206,8 +208,12 @@
 
         // setup next/previous with c--current
         $$selectorLibrary$$S($target.dom.parentElement).addClass('c--current');
+
+        // Update image in the overlay
+        app$$_updateOverlay($target.dom.dataset["lg"], $target.dom.parentElement.querySelector('.js-caption').textContent);
+
         // show the overlay
-        $overlay.addClass('c--active');
+        $$selectorLibrary$$S(document.querySelector('#overlay')).addClass('c--active');
     };
 
     var app$$_bindOverlayActions = function(e) {
@@ -236,14 +242,14 @@
         $$selectorLibrary$$S($$advanceImage).addClass('c--current');
 
         // change the overlay image
-        $$overlayImage.setAttribute('src', $$advanceImage.querySelector('img').dataset["lg"]);
+        app$$_updateOverlay($$advanceImage.querySelector('img').dataset["lg"], $$advanceImage.querySelector('.js-caption').textContent);
     };
 
     var app$$_subscribeToImages = function() {
         var $content = $$selectorLibrary$$S('#feed');
         // bind overlay
-        $$selectorLibrary$$S('#feed').dom.addEventListener('click', app$$_bindThumbnailActions);
-        $$selectorLibrary$$S('#overlay').dom.addEventListener('click', app$$_bindOverlayActions);
+        document.querySelector('#feed').addEventListener('click', app$$_bindThumbnailActions);
+        document.querySelector('#overlay').addEventListener('click', app$$_bindOverlayActions);
 
         $$eventBus$$EventBus.subscribe($$eventBus$$EventBus.events.IMAGES_UPDATED, function(data) {
             if (!data.length) {
@@ -259,9 +265,9 @@
                 var thumbUrl = gagObj.images.small;
                 var lgUrl = gagObj.images.large;
                 var caption = gagObj.caption;
-                var $imageWrapper = $$selectorLibrary$$S('<div class="c-images"></div>');
-                var $image = $$selectorLibrary$$S('<img src="' + thumbUrl + '" data-lg="' + lgUrl + '"/>');
-                var $caption = $$selectorLibrary$$S('<p>' + caption + '</p>');
+                var $imageWrapper = $$selectorLibrary$$S('<div class="c-image"></div>');
+                var $image = $$selectorLibrary$$S('<img class="c-image__img" src="' + thumbUrl + '" data-lg="' + lgUrl + '"/>');
+                var $caption = $$selectorLibrary$$S('<p class="c-images__caption js-caption">' + caption + '</p>');
 
                 // API currently only supports nodes to be appended to dom first
                 // because append() doesn't change pointer to correct one in a
