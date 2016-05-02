@@ -1,4 +1,4 @@
-// Simple selector library that just selects by ID
+// Simple selector library that just selects by single element (identified by ID)
 // We need this wrapper to create our own .append()
 var SelectorLibrary = function(selector) {
     this.selector = selector || null;
@@ -81,6 +81,23 @@ SelectorLibrary.prototype.append = function(child) {
     }
 
     return;
+};
+
+SelectorLibrary.prototype.hasClass = function(className) {
+    return !!this.dom.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'))
+};
+
+SelectorLibrary.prototype.addClass = function(className) {
+    if (!this.hasClass(className)) { 
+        this.dom.className += " " + className;
+    }
+};
+
+SelectorLibrary.prototype.removeClass = function(className) {
+    if (this.hasClass(className)) {
+        var regex = new RegExp('(\\s|^)' + className + '(\\s|$)');
+        this.dom.className = this.dom.className.replace(regex, ' ');
+    }
 };
 
 // Creates a wrapper around selected element

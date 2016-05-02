@@ -83,6 +83,23 @@
         return;
     };
 
+    $$selectorLibrary$$SelectorLibrary.prototype.hasClass = function(className) {
+        return !!this.dom.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'))
+    };
+
+    $$selectorLibrary$$SelectorLibrary.prototype.addClass = function(className) {
+        if (!this.hasClass(className)) { 
+            this.dom.className += " " + className;
+        }
+    };
+
+    $$selectorLibrary$$SelectorLibrary.prototype.removeClass = function(className) {
+        if (this.hasClass(className)) {
+            var regex = new RegExp('(\\s|^)' + className + '(\\s|$)');
+            this.dom.className = this.dom.className.replace(regex, ' ');
+        }
+    };
+
     // Creates a wrapper around selected element
     var $$selectorLibrary$$S = function(selector) {
         var $obj = new $$selectorLibrary$$SelectorLibrary(selector);
@@ -165,8 +182,78 @@
         return $$imageFetcher$$ImageFetcher(url, query);
     };
 
-    var app$$run = function() {
-        var $content = $$selectorLibrary$$S('#printer');
+    var app$$_updateOverlay = function(imgSrc, caption) {
+        var $$overlay = document.querySelector('#overlay');
+        var $$caption = $$overlay.querySelector('#overlay-title');
+        var $$img = $$overlay.querySelector('#overlay-img');
+
+        $$img.setAttribute('src', imgSrc);
+        $$caption.textContent = caption;
+    };
+
+    var app$$_bindThumbnailActions = function(e) {
+        var $target = $$selectorLibrary$$S(e.target);
+
+        // check if target is img...
+        if ($target.dom.tagName != 'IMG') {
+            // TODO: hook up click to find the image
+            return;
+        }
+
+        // nuke all c--current classes first
+        var currentImages = document.querySelectorAll('#feed .c--current');
+        for (var i = 0; i < currentImages.length; i++) {
+            $$selectorLibrary$$S(currentImages[i]).removeClass('c--current');
+        }
+
+        // setup next/previous with c--current
+        $$selectorLibrary$$S($target.dom.parentElement).addClass('c--current');
+
+        // Update image in the overlay
+        app$$_updateOverlay($target.dom.dataset["lg"], $target.dom.parentElement.querySelector('.js-caption').textContent);
+
+        // show the overlay
+        $$selectorLibrary$$S(document.querySelector('#overlay')).addClass('c--active');
+    };
+
+    var app$$_bindOverlayActions = function(e) {
+        var targetId = e.target.getAttribute('id');
+
+        if (targetId !== 'overlay-next' && targetId !== 'overlay-prev' && targetId !== 'overlay-close') {
+            return;
+        }
+
+        var $$currentImage = document.querySelector('#feed .c--current');
+        // there's only 1 image in the overlay
+        var $$overlayImage = document.querySelector('#overlay img');
+        var $$advanceImage;
+
+        if (targetId === 'overlay-next') {
+            $$advanceImage = $$currentImage.nextSibling;
+        } else if (targetId === 'overlay-prev') {
+            $$advanceImage = $$currentImage.previousSibling;
+        } else if (targetId === 'overlay-close') {
+            // hide the overlay
+            $$selectorLibrary$$S(document.querySelector('#overlay')).removeClass('c--active');
+            return;
+        }
+
+        if (!$$advanceImage) {
+            return;
+        }
+
+        $$selectorLibrary$$S($$currentImage).removeClass('c--current');
+        $$selectorLibrary$$S($$advanceImage).addClass('c--current');
+
+        // change the overlay image
+        app$$_updateOverlay($$advanceImage.querySelector('img').dataset["lg"], $$advanceImage.querySelector('.js-caption').textContent);
+    };
+
+    var app$$_subscribeToImages = function() {
+        var $content = $$selectorLibrary$$S('#feed');
+        // bind overlay
+        document.querySelector('#feed').addEventListener('click', app$$_bindThumbnailActions);
+        document.querySelector('#overlay').addEventListener('click', app$$_bindOverlayActions);
 
         $$eventBus$$EventBus.subscribe($$eventBus$$EventBus.events.IMAGES_UPDATED, function(data) {
             if (!data.length) {
@@ -179,11 +266,12 @@
             for(var i = 0; i < dataSize - 1; i++) {
                 var gagObj = data[i];
 
-                var imgUrl = gagObj.images.small;
+                var thumbUrl = gagObj.images.small;
+                var lgUrl = gagObj.images.large;
                 var caption = gagObj.caption;
-                var $imageWrapper = $$selectorLibrary$$S('<div class="c-images"></div>');
-                var $image = $$selectorLibrary$$S('<img src="' + imgUrl + '"/>');
-                var $caption = $$selectorLibrary$$S('<p>' + caption + '</p>');
+                var $imageWrapper = $$selectorLibrary$$S('<div class="c-block"></div>');
+                var $image = $$selectorLibrary$$S('<img class="c-image__img" src="' + thumbUrl + '" data-lg="' + lgUrl + '"/>');
+                var $caption = $$selectorLibrary$$S('<p class="c-images__caption js-caption">' + caption + '</p>');
 
                 // API currently only supports nodes to be appended to dom first
                 // because append() doesn't change pointer to correct one in a
@@ -192,15 +280,21 @@
                 $imageWrapper.append($image);
                 $imageWrapper.append($caption);
             }
-
         });
+    };
 
+    var app$$_initImageFetch = function() {
         var url = 'http://infinigag.k3min.eu/';
         var category = 'hot';
 
         var imageFetcher = $$imageFetcher$$ImageFetcherModule(url, category);
 
         imageFetcher.getImages();
+    };
+
+    var app$$run = function() {
+        app$$_subscribeToImages();
+        app$$_initImageFetch();
     };
 
     // let the fun begin!
