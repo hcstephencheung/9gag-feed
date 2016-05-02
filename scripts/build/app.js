@@ -219,7 +219,7 @@
     var app$$_bindOverlayActions = function(e) {
         var targetId = e.target.getAttribute('id');
 
-        if (targetId !== 'overlay-next' && targetId !== 'overlay-prev') {
+        if (targetId !== 'overlay-next' && targetId !== 'overlay-prev' && targetId !== 'overlay-close') {
             return;
         }
 
@@ -230,8 +230,12 @@
 
         if (targetId === 'overlay-next') {
             $$advanceImage = $$currentImage.nextSibling;
-        } else {
+        } else if (targetId === 'overlay-prev') {
             $$advanceImage = $$currentImage.previousSibling;
+        } else if (targetId === 'overlay-close') {
+            // hide the overlay
+            $$selectorLibrary$$S(document.querySelector('#overlay')).removeClass('c--active');
+            return;
         }
 
         if (!$$advanceImage) {
